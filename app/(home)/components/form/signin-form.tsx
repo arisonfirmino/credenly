@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -17,6 +18,8 @@ const schema = yup.object({
 });
 
 const SignInForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -31,8 +34,14 @@ const SignInForm = () => {
   const passwordValue = watch("password");
 
   const onSubmit = (data: SignInFormData) => {
-    console.log("Usuário logado:", data);
-    reset();
+    setIsLoading(true);
+
+    try {
+      console.log("Usuário logado:", data);
+    } finally {
+      setIsLoading(false);
+      reset();
+    }
   };
 
   return (
@@ -57,7 +66,9 @@ const SignInForm = () => {
           Esqueci minha senha
         </p>
       </div>
-      <SubmitButton>Entrar</SubmitButton>
+      <SubmitButton isLoading={isLoading}>
+        {isLoading ? "Carregando" : "Entrar"}
+      </SubmitButton>
     </form>
   );
 };

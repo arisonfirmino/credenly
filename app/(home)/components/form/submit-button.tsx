@@ -1,13 +1,23 @@
-import { MoveRightIcon } from "lucide-react";
+import { LoaderCircleIcon, MoveRightIcon } from "lucide-react";
 
-const SubmitButton = ({ children }: { children: React.ReactNode }) => {
+interface SubmitButtonProps {
+  children: React.ReactNode;
+  isLoading: boolean;
+}
+
+const SubmitButton = ({ children, isLoading }: SubmitButtonProps) => {
   return (
     <button
       type="submit"
-      className="jetbrains-mono flex w-full items-center justify-between rounded-xl bg-blue-700 px-5 py-2.5 uppercase text-white active:bg-gray-400"
+      disabled={isLoading}
+      className={`jetbrains-mono flex w-full items-center justify-between rounded-xl bg-blue-700 px-5 py-2.5 uppercase text-white active:bg-gray-400 ${isLoading ? "cursor-not-allowed" : ""}`}
     >
       {children}
-      <MoveRightIcon size={16} />
+      {isLoading ? (
+        <LoaderCircleIcon size={16} className="animate-spin" />
+      ) : (
+        <MoveRightIcon size={16} />
+      )}
     </button>
   );
 };

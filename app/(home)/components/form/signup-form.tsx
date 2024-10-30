@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -7,6 +8,7 @@ import * as yup from "yup";
 import InputForm from "@/app/(home)/components/form/input-form";
 import SubmitButton from "@/app/(home)/components/form/submit-button";
 import { SignUpFormData } from "@/app/types";
+import { createNewUser } from "@/app/action/user";
 
 const schema = yup.object({
   firstName: yup
@@ -46,11 +48,14 @@ const schema = yup.object({
 });
 
 const SignUpForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
     watch,
     reset,
+    setError,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -62,9 +67,32 @@ const SignUpForm = () => {
   const passwordValue = watch("password");
   const passwordConfirmationValue = watch("passwordConfirmation");
 
-  const onSubmit = (data: SignUpFormData) => {
-    console.log("Usuário cadastrado:", data);
-    reset();
+  const onSubmit = async (data: SignUpFormData) => {
+    const formData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+    };
+
+    setIsLoading(true);
+
+    try {
+      await createNewUser(formData);
+      reset();
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === "Este email já está em uso, tente outro."
+      ) {
+        setError("email", {
+          type: "manual",
+          message: "Este email já está em uso, tente outro.",
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -111,7 +139,9 @@ const SignUpForm = () => {
         />
       </div>
 
-      <SubmitButton>Próximo</SubmitButton>
+      <SubmitButton isLoading={isLoading}>
+        {isLoading ? "Carregando" : "Próximo"}
+      </SubmitButton>
     </form>
   );
 };
