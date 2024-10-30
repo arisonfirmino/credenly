@@ -1,18 +1,29 @@
-interface InputFormProps {
-  label: string;
-  placeholder: string;
-  type?: string;
-}
+import { InputFormProps } from "@/app/types";
 
-const InputForm = ({ label, placeholder, type = "text" }: InputFormProps) => {
+const InputForm = ({
+  label,
+  placeholder,
+  type = "text",
+  register,
+  error,
+  value,
+}: InputFormProps) => {
   return (
     <div className="flex w-full flex-col gap-1.5">
       <label className="uppercase text-gray-400">{label}</label>
       <input
         type={type}
         placeholder={placeholder}
-        className="truncate rounded-xl border border-solid border-gray-400 bg-transparent p-2.5 outline-none focus:border-blue-700"
+        {...register}
+        className={`truncate rounded-xl border border-solid bg-transparent p-2.5 outline-none ${
+          error
+            ? "border-red-600 focus:border-red-600"
+            : value
+              ? "border-green-600 focus:border-green-600"
+              : "border-gray-400 focus:border-blue-700"
+        }`}
       />
+      {error && <small className="text-red-600">{error}</small>}
     </div>
   );
 };

@@ -1,24 +1,113 @@
-import InputForm from "./input-form";
-import SubmitButton from "./submit-button";
+"use client";
+
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+import InputForm from "@/app/(home)/components/form/input-form";
+import SubmitButton from "@/app/(home)/components/form/submit-button";
+import { SignUpFormData } from "@/app/types";
+
+const schema = yup.object({
+  firstName: yup
+    .string()
+    .required("Este campo é obrigatório.")
+    .min(3, "O nome precisa ter no minimo 3 caracteres.")
+    .matches(
+      /^[a-zA-ZÀ-ÿ\u00f1\u00d1 ]+$/,
+      "O nome não pode conter caracteres especiais.",
+    ),
+  lastName: yup
+    .string()
+    .required("Este campo é obrigatório.")
+    .min(3, "O sobrenome precisa ter no minimo 3 caracteres.")
+    .matches(
+      /^[a-zA-ZÀ-ÿ\u00f1\u00d1 ]+$/,
+      "O sobrenome não pode conter caracteres especiais.",
+    ),
+  email: yup
+    .string()
+    .required("Este campo é obrigatório.")
+    .email("Insira um e-mail válido."),
+  password: yup
+    .string()
+    .required("Este campo é obrigatório.")
+    .min(6, "A senha precisa ter no minimo 6 caracteres.")
+    .matches(/[A-Z]/, "A senha precisa ter pelo menos uma letra maiúscula.")
+    .matches(/[0-9]/, "A senha precisa ter pelo menos um número.")
+    .matches(
+      /[@$!%*?&]/,
+      "A senha precisa ter pelo menos um caractere especial.",
+    ),
+  passwordConfirmation: yup
+    .string()
+    .oneOf([yup.ref("password"), undefined], "As senhas precisam ser iguais.")
+    .required("Este campo é obrigatório."),
+});
 
 const SignUpForm = () => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const firstNameValue = watch("firstName");
+  const lastNameValue = watch("lastName");
+  const emailValue = watch("email");
+  const passwordValue = watch("password");
+  const passwordConfirmationValue = watch("passwordConfirmation");
+
+  const onSubmit = (data: SignUpFormData) => {
+    console.log("Usuário cadastrado:", data);
+    reset();
+  };
+
   return (
-    <form className="space-y-10">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
       <div className="space-y-5">
         <div className="flex gap-5">
-          <InputForm label="Nome" placeholder="Digite seu nome" />
-          <InputForm label="Sobrenome" placeholder="Digite seu sobrenome" />
+          <InputForm
+            label="Nome"
+            placeholder="Digite seu nome"
+            register={{ ...register("firstName") }}
+            error={errors.firstName?.message}
+            value={firstNameValue}
+          />
+          <InputForm
+            label="Sobrenome"
+            placeholder="Digite seu sobrenome"
+            register={{ ...register("lastName") }}
+            error={errors.lastName?.message}
+            value={lastNameValue}
+          />
         </div>
-        <InputForm label="Email" placeholder="Insira seu endereço de e-mail" />
+        <InputForm
+          label="Email"
+          placeholder="Insira seu endereço de e-mail"
+          register={{ ...register("email") }}
+          error={errors.email?.message}
+          value={emailValue}
+        />
         <InputForm
           label="Senha"
           type="password"
           placeholder="Digite sua senha"
+          register={{ ...register("password") }}
+          error={errors.password?.message}
+          value={passwordValue}
         />
         <InputForm
           label="Confirmação de senha"
           type="password"
           placeholder="Digite sua senha novamente"
+          register={{ ...register("passwordConfirmation") }}
+          error={errors.passwordConfirmation?.message}
+          value={passwordConfirmationValue}
         />
       </div>
 
