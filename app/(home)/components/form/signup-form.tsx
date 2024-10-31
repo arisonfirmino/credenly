@@ -9,6 +9,7 @@ import InputForm from "@/app/(home)/components/form/input-form";
 import SubmitButton from "@/app/(home)/components/form/submit-button";
 import { SignUpFormData } from "@/app/types";
 import { createNewUser } from "@/app/action/user";
+import { signIn } from "next-auth/react";
 
 const schema = yup.object({
   firstName: yup
@@ -80,10 +81,15 @@ const SignUpForm = () => {
     try {
       await createNewUser(formData);
       reset();
+      await signIn("credentials", {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
     } catch (error) {
       if (
         error instanceof Error &&
-        error.message === "Este email já está em uso, tente outro."
+        error.message.includes("email já está em uso")
       ) {
         setError("email", {
           type: "manual",

@@ -10,7 +10,7 @@ const SubmitButton = ({ children, isLoading }: SubmitButtonProps) => {
     <button
       type="submit"
       disabled={isLoading}
-      className={`jetbrains-mono flex w-full items-center justify-between rounded-xl bg-blue-700 px-5 py-2.5 uppercase text-white active:bg-gray-400 ${isLoading ? "cursor-not-allowed" : ""}`}
+      className={`jetbrains-mono flex w-full items-center justify-between rounded-xl px-5 py-2.5 uppercase text-white active:bg-gray-400 ${isLoading ? "cursor-not-allowed bg-gray-400" : "bg-blue-700"}`}
     >
       {children}
       {isLoading ? (

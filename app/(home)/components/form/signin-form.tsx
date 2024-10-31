@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -8,6 +9,7 @@ import * as yup from "yup";
 import InputForm from "@/app/(home)/components/form/input-form";
 import SubmitButton from "@/app/(home)/components/form/submit-button";
 import { SignInFormData } from "@/app/types";
+import { signIn } from "next-auth/react";
 
 const schema = yup.object({
   email: yup
@@ -20,11 +22,14 @@ const schema = yup.object({
 const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
     watch,
     reset,
+    setError,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -33,15 +38,35 @@ const SignInForm = () => {
   const emailValue = watch("email");
   const passwordValue = watch("password");
 
-  const onSubmit = (data: SignInFormData) => {
+  const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
 
-    try {
-      console.log("Usuário logado:", data);
-    } finally {
+    const result = await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: data.password,
+    });
+
+    if (result?.error) {
+      if (result.error === "Usuário não cadastrado.") {
+        setError("email", {
+          type: "manual",
+          message: "Usuário não cadastrado.",
+        });
+      } else if (result.error === "Senha incorreta.") {
+        setError("password", {
+          type: "manual",
+          message: "Senha incorreta.",
+        });
+      }
+
       setIsLoading(false);
-      reset();
+      return;
     }
+
+    setIsLoading(false);
+    reset();
+    router.replace("/admin");
   };
 
   return (

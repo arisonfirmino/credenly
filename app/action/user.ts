@@ -2,6 +2,7 @@
 
 import { db } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
+import bcrypt from "bcryptjs";
 
 interface CreateNewUserProps {
   firstName: string;
@@ -30,12 +31,14 @@ export const createNewUser = async ({
     throw new Error("Este email já está em uso, tente outro.");
   }
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   await db.user.create({
     data: {
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword,
     },
   });
 
