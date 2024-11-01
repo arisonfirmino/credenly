@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ActionButton from "@/app/(home)/components/action-button";
+import ActionButton from "@/app/components/action-button";
 import SignUpForm from "./form/signup-form";
 import SignInForm from "./form/signin-form";
 

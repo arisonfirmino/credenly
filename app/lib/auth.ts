@@ -47,9 +47,17 @@ export const authOptions: AuthOptions = {
     signIn: "/",
   },
   callbacks: {
-    session: async ({ session }) => {
-      session.customValue = new Date().toISOString();
-      return Promise.resolve(session);
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

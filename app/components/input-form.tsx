@@ -7,6 +7,7 @@ const InputForm = ({
   register,
   error,
   value,
+  showError = true,
 }: InputFormProps) => {
   return (
     <div className="flex w-full flex-col gap-1.5">
@@ -23,7 +24,9 @@ const InputForm = ({
               : "border-gray-400 focus:border-blue-700"
         }`}
       />
-      {error && <small className="text-red-600">{error}</small>}
+      {showError && error && (
+        <small className="text-red-600">{error.message}</small>
+      )}
     </div>
   );
 };

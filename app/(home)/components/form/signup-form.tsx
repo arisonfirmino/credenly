@@ -5,11 +5,12 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import InputForm from "@/app/(home)/components/form/input-form";
-import SubmitButton from "@/app/(home)/components/form/submit-button";
+import InputForm from "@/app/components/input-form";
+import SubmitButton from "@/app/components/submit-button";
 import { SignUpFormData } from "@/app/types";
-import { createNewUser } from "@/app/action/user";
+import { createNewUser } from "@/app/actions/user";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const schema = yup.object({
   firstName: yup
@@ -51,6 +52,8 @@ const schema = yup.object({
 const SignUpForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const route = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -86,6 +89,8 @@ const SignUpForm = () => {
         email: data.email,
         password: data.password,
       });
+
+      route.replace("/phone");
     } catch (error) {
       if (
         error instanceof Error &&
@@ -96,9 +101,8 @@ const SignUpForm = () => {
           message: "Este email já está em uso, tente outro.",
         });
       }
-    } finally {
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -109,14 +113,14 @@ const SignUpForm = () => {
             label="Nome"
             placeholder="Digite seu nome"
             register={{ ...register("firstName") }}
-            error={errors.firstName?.message}
+            error={errors.firstName}
             value={firstNameValue}
           />
           <InputForm
             label="Sobrenome"
             placeholder="Digite seu sobrenome"
             register={{ ...register("lastName") }}
-            error={errors.lastName?.message}
+            error={errors.lastName}
             value={lastNameValue}
           />
         </div>
@@ -124,7 +128,7 @@ const SignUpForm = () => {
           label="Email"
           placeholder="Insira seu endereço de e-mail"
           register={{ ...register("email") }}
-          error={errors.email?.message}
+          error={errors.email}
           value={emailValue}
         />
         <InputForm
@@ -132,7 +136,7 @@ const SignUpForm = () => {
           type="password"
           placeholder="Digite sua senha"
           register={{ ...register("password") }}
-          error={errors.password?.message}
+          error={errors.password}
           value={passwordValue}
         />
         <InputForm
@@ -140,7 +144,7 @@ const SignUpForm = () => {
           type="password"
           placeholder="Digite sua senha novamente"
           register={{ ...register("passwordConfirmation") }}
-          error={errors.passwordConfirmation?.message}
+          error={errors.passwordConfirmation}
           value={passwordConfirmationValue}
         />
       </div>

@@ -2,14 +2,8 @@
 
 import { db } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { CreateNewUserProps } from "@/app/types";
 import bcrypt from "bcryptjs";
-
-interface CreateNewUserProps {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
 
 export const createNewUser = async ({
   firstName,

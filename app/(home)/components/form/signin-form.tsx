@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import InputForm from "@/app/(home)/components/form/input-form";
-import SubmitButton from "@/app/(home)/components/form/submit-button";
+import InputForm from "@/app/components/input-form";
+import SubmitButton from "@/app/components/submit-button";
 import { SignInFormData } from "@/app/types";
 import { signIn } from "next-auth/react";
 
@@ -76,7 +76,7 @@ const SignInForm = () => {
           label="Email"
           placeholder="Insira seu endereço de e-mail"
           register={{ ...register("email") }}
-          error={errors.email?.message}
+          error={errors.email}
           value={emailValue}
         />
         <InputForm
@@ -84,7 +84,7 @@ const SignInForm = () => {
           type="password"
           placeholder="Digite sua senha"
           register={{ ...register("password") }}
-          error={errors.password?.message}
+          error={errors.password}
           value={passwordValue}
         />
         <p className="cursor-pointer text-sm text-blue-700 hover:underline">

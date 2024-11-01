@@ -1,8 +1,8 @@
-import UserData from "@/app/(admin)/components/user-data";
 import { authOptions } from "@/app/lib/auth";
 import { db } from "@/app/lib/prisma";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
+import AdminWrapper from "../components/admin-wrapper";
 
 const Admin = async () => {
   const session = await getServerSession(authOptions);
@@ -15,6 +15,9 @@ const Admin = async () => {
     where: {
       email: session.user.email,
     },
+    include: {
+      address: true,
+    },
   });
 
   if (!user) {
@@ -22,8 +25,12 @@ const Admin = async () => {
   }
 
   return (
-    <main className="flex min-h-screen w-full items-center justify-center">
-      <UserData user={user} />
+    <main className="relative flex min-h-screen w-full items-center justify-center">
+      <AdminWrapper user={user} />
+
+      <p className="absolute bottom-5 left-1/2 -translate-x-1/2 transform text-xs text-gray-400">
+        © 2024 Arison. All Rights Reserved
+      </p>
     </main>
   );
 };
