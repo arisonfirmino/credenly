@@ -1,16 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 import InputForm from "@/app/components/input-form";
 import SubmitButton from "@/app/components/submit-button";
-import { SignUpFormData } from "@/app/types";
-import { createNewUser } from "@/app/actions/user";
+
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
+import { createNewUser } from "@/app/actions/user";
+
+import { SignUpFormData } from "@/app/types";
 
 const schema = yup.object({
   firstName: yup
@@ -81,34 +85,37 @@ const SignUpForm = () => {
 
     setIsLoading(true);
 
-    try {
-      await createNewUser(formData);
-      reset();
-      await signIn("credentials", {
-        redirect: false,
-        email: data.email,
-        password: data.password,
-      });
+    const result = await createNewUser(formData);
 
-      route.replace("/phone");
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message.includes("email já está em uso")
-      ) {
+    if (result) {
+      if (result.error === "Este email já está em uso, tente outro.") {
         setError("email", {
           type: "manual",
           message: "Este email já está em uso, tente outro.",
         });
       }
+
+      setIsLoading(false);
+      return;
     }
+
+    reset();
+
+    await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: data.password,
+    });
+
+    route.replace("/email-verification");
+
     setIsLoading(false);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
       <div className="space-y-5">
-        <div className="flex gap-5">
+        <div className="flex flex-col gap-5 md:flex-row">
           <InputForm
             label="Nome"
             placeholder="Digite seu nome"

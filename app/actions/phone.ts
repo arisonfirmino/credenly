@@ -28,6 +28,7 @@ export const updatePhoneNumber = async ({
     },
     data: {
       phone: phoneNumber,
+      update_at: new Date(),
     },
   });
 

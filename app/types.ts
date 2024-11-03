@@ -1,8 +1,6 @@
 import { Address, Prisma, User } from "@prisma/client";
 import { FieldError, UseFormRegisterReturn } from "react-hook-form";
 
-// user action types
-
 export interface CreateNewUserProps {
   firstName: string;
   lastName: string;
@@ -10,9 +8,7 @@ export interface CreateNewUserProps {
   password: string;
 }
 
-// address action types
-
-export interface UpdateAddressProps {
+export interface CreateAddressProps {
   zipCode: number;
   street: string;
   number: number;
@@ -23,21 +19,20 @@ export interface UpdateAddressProps {
   userId: string;
 }
 
-// phone number action types
-
 export interface UpdatePhoneNumberProps {
   userId: string;
   phoneNumber: string;
 }
 
-// signin form types
+export interface UpdateEmailVerifiedProps {
+  userId: string;
+  code: string;
+}
 
 export interface SignInFormData {
   email: string;
   password: string;
 }
-
-// signup form types
 
 export interface SignUpFormData {
   firstName: string;
@@ -46,8 +41,6 @@ export interface SignUpFormData {
   password: string;
   passwordConfirmation: string;
 }
-
-// address form types
 
 export interface AddressFormData {
   street: string;
@@ -59,8 +52,6 @@ export interface AddressFormData {
   number: number;
 }
 
-// input form types
-
 export interface InputFormProps {
   label: string;
   placeholder: string;
@@ -71,8 +62,6 @@ export interface InputFormProps {
   value?: string | number | undefined;
 }
 
-// admin wrapper types
-
 export interface AdminWrapperProps {
   user: Prisma.UserGetPayload<{
     include: {
@@ -81,14 +70,22 @@ export interface AdminWrapperProps {
   }>;
 }
 
-// address data types
+export interface EmailVerificationWrapperProps {
+  user: User | null;
+}
 
 export interface AddressDataProps {
   address: Address;
 }
 
-// warnings types
-
 export interface WarningsProps {
+  user: User;
+}
+
+export interface PhoneFormProps {
+  closeComponent?: () => void;
+}
+
+export interface PhoneWrapperProps {
   user: User;
 }

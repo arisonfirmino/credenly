@@ -2,15 +2,22 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
+import { usePathname, useRouter } from "next/navigation";
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+
 import SkipButton from "@/app/components/skip-button";
 import SubmitButton from "@/app/components/submit-button";
+
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+
 import { updatePhoneNumber } from "@/app/actions/phone";
+
+import { PhoneFormProps } from "@/app/types";
 
 const schema = yup.object({
   phoneNumber: yup
@@ -19,9 +26,11 @@ const schema = yup.object({
     .min(11, "O número de telefone precisa ter 11 números."),
 });
 
-const PhoneForm = () => {
+const PhoneForm = ({ closeComponent }: PhoneFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
+  const pathname = usePathname();
 
   const { data: session } = useSession();
 
@@ -47,7 +56,16 @@ const PhoneForm = () => {
       await updatePhoneNumber(formData).then(() => {
         reset();
         setIsLoading(false);
-        router.replace("/address");
+
+        if (pathname === "/admin") {
+          if (closeComponent) {
+            closeComponent();
+          }
+
+          return;
+        } else {
+          router.replace("/address");
+        }
       });
     }
   };
@@ -68,9 +86,9 @@ const PhoneForm = () => {
 
       <div className="flex items-center justify-end gap-5">
         <SubmitButton isLoading={isLoading} showIcon={false} className="w-fit">
-          {isLoading ? "Carregando" : "Cadastrar"}
+          {isLoading ? "Carregando" : "Atualizar"}
         </SubmitButton>
-        <SkipButton href="/address" />
+        {pathname === "/admin" ? "" : <SkipButton href="/address" />}
       </div>
     </form>
   );

@@ -2,9 +2,9 @@
 
 import { db } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { UpdateAddressProps } from "@/app/types";
+import { CreateAddressProps } from "@/app/types";
 
-export const updateAddress = async ({
+export const createNewAddress = async ({
   zipCode,
   street,
   number,
@@ -13,7 +13,7 @@ export const updateAddress = async ({
   city,
   additionalInfo,
   userId,
-}: UpdateAddressProps) => {
+}: CreateAddressProps) => {
   if (!userId) {
     throw new Error("Usuário não encontrado.");
   }
@@ -67,6 +67,15 @@ export const updateAddress = async ({
       },
     });
   }
+
+  await db.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      update_at: new Date(),
+    },
+  });
 
   revalidatePath("/");
 };

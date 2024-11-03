@@ -25,7 +25,7 @@ const Admin = async () => {
   }
 
   return (
-    <main className="relative flex min-h-screen w-full items-center justify-center">
+    <main className="relative flex min-h-screen w-full justify-center pb-20 pt-40">
       <AdminWrapper user={user} />
 
       <p className="absolute bottom-5 left-1/2 -translate-x-1/2 transform text-xs text-gray-400">

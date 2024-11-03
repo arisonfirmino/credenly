@@ -8,7 +8,7 @@ const AddressWrapper = () => {
   const [showAddressForm, setShowAddressForm] = useState(true);
 
   return (
-    <div className="flex flex-col items-center gap-2.5 p-5 pl-0">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-2.5 md:w-auto md:justify-normal md:p-5 md:pl-0">
       <ActionButton
         showComponent={showAddressForm}
         handleClick={() => setShowAddressForm(!showAddressForm)}

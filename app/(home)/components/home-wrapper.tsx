@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+
 import ActionButton from "@/app/components/action-button";
-import SignUpForm from "./form/signup-form";
-import SignInForm from "./form/signin-form";
+
+import SignUpForm from "@/app/(home)/components/form/signup-form";
+import SignInForm from "@/app/(home)/components/form/signin-form";
 
 const HomeWrapper = () => {
   const [showSignUp, setShowSignUp] = useState(true);
@@ -20,13 +22,13 @@ const HomeWrapper = () => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-2.5 p-5 pl-0">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-2.5 md:w-auto md:justify-normal md:p-5 md:pl-0">
       <ActionButton showComponent={showSignUp} handleClick={handleClick}>
         Cadastre-se
       </ActionButton>
 
       {showSignUp && (
-        <div className="w-full max-w-lg space-y-10 py-10">
+        <div className="w-full space-y-10 py-10 md:max-w-lg">
           <h3 className="jetbrains-mono text-xl font-semibold uppercase">
             Vamos começar
           </h3>
@@ -39,7 +41,7 @@ const HomeWrapper = () => {
       </ActionButton>
 
       {showSignIn && (
-        <div className="w-full max-w-lg space-y-10 py-10">
+        <div className="w-full space-y-10 py-10 md:max-w-lg">
           <h3 className="jetbrains-mono text-xl font-semibold uppercase">
             Faça login
           </h3>

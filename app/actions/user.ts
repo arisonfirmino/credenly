@@ -22,7 +22,7 @@ export const createNewUser = async ({
   });
 
   if (existingEmail) {
-    throw new Error("Este email já está em uso, tente outro.");
+    return { error: "Este email já está em uso, tente outro." };
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);

@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 import InputForm from "@/app/components/input-form";
 import SubmitButton from "@/app/components/submit-button";
-import { SignInFormData } from "@/app/types";
+
 import { signIn } from "next-auth/react";
+
+import { SignInFormData } from "@/app/types";
 
 const schema = yup.object({
   email: yup

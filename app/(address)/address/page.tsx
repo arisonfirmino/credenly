@@ -1,5 +1,5 @@
 import Container from "@/app/components/container";
-import AddressWrapper from "../components/address-wrapper";
+import AddressWrapper from "@/app/(address)/components/address-wrapper";
 
 const AddressPage = () => {
   return (

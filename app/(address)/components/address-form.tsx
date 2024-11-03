@@ -1,26 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
+import axios from "axios";
+
 import InputForm from "@/app/components/input-form";
 import SkipButton from "@/app/components/skip-button";
 import SubmitButton from "@/app/components/submit-button";
+
+import { createNewAddress } from "@/app/actions/address";
+
 import { AddressFormData } from "@/app/types";
-import axios from "axios";
-import { updateAddress } from "@/app/actions/address";
 
 const schema = yup.object({
-  street: yup.string().required(),
-  neighborhood: yup.string().required(),
-  zipCode: yup.string().required(),
-  state: yup.string().required(),
-  city: yup.string().required(),
-  additionalInfo: yup.string(),
+  street: yup.string().required().min(3),
+  neighborhood: yup.string().required().min(3),
+  zipCode: yup.string().required().min(8).max(8),
+  state: yup.string().required().min(3),
+  city: yup.string().required().min(3),
+  additionalInfo: yup.string().min(3),
   number: yup.number().required(),
 });
 
@@ -76,7 +80,7 @@ const AddressForm = () => {
 
       setIsLoading(true);
 
-      await updateAddress(formData).then(() => {
+      await createNewAddress(formData).then(() => {
         reset();
         setIsLoading(false);
         router.replace("/admin");
@@ -87,7 +91,7 @@ const AddressForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
       <div className="space-y-5">
-        <div className="w-full max-w-52">
+        <div className="w-full md:max-w-52">
           <InputForm
             label="CEP"
             placeholder="000000"
@@ -97,7 +101,7 @@ const AddressForm = () => {
           />
         </div>
 
-        <div className="flex gap-5">
+        <div className="flex flex-col gap-5 md:flex-row">
           <InputForm
             label="Rua"
             placeholder="Nome da rua"
@@ -133,7 +137,7 @@ const AddressForm = () => {
           error={errors.additionalInfo}
         />
 
-        <div className="flex gap-5">
+        <div className="flex flex-col gap-5 md:flex-row">
           <InputForm
             label="Estado"
             placeholder="Selecione o estado"

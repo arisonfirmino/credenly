@@ -16,7 +16,7 @@ const ActionButton = ({
   return (
     <button
       onClick={handleClick}
-      className="jetbrains-mono flex w-full items-center justify-between border-b border-solid border-gray-400 p-2.5 uppercase text-gray-400"
+      className={`jetbrains-mono flex w-full items-center justify-between border-b border-solid p-2.5 uppercase ${showComponent ? "border-blue-700 text-blue-700" : "border-gray-400 text-gray-400"}`}
     >
       {children}
       {showComponent ? (
