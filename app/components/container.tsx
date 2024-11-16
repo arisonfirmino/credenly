@@ -7,7 +7,7 @@ const Container = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main
-      className={`relative flex min-h-screen justify-center bg-gray-100 ${pathname === "/" ? "w-full" : "items-center pb-5 pt-20 md:p-0 xl:ml-[448px] xl:w-custom"}`}
+      className={`relative flex min-h-screen justify-center bg-gray-100 ${pathname === "/" ? "w-full" : "items-center pb-5 pt-20 xl:ml-[448px] xl:w-custom"}`}
     >
       {children}
     </main>

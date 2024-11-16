@@ -34,7 +34,7 @@ model Address {
   state          String
   city           String
   additionalInfo String?
-  User           User    @relation(fields: [userId], references: [id])
+  user           User    @relation(fields: [userId], references: [id])
   userId         String
 
   @@map("address")
@@ -44,7 +44,7 @@ model Review {
   id         String   @id @default(uuid())
   comment    String
   rating     String
-  User       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
   userId     String
   created_at DateTime @default(now())
   update_at  DateTime @default(now())
