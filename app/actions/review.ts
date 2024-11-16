@@ -3,99 +3,14 @@
 import { db } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-interface UpdateAddressProps {
-  zipCode: string;
-  street: string;
-  number: string;
-  neighborhood: string;
-  state: string;
-  city: string;
-  additionalInfo?: string;
-  userId: string;
-}
-
-export const updateAddress = async ({
-  zipCode,
-  street,
-  number,
-  neighborhood,
-  state,
-  city,
-  additionalInfo,
+export const createNewreview = async ({
   userId,
-}: UpdateAddressProps) => {
-  if (!userId) {
-    throw new Error("Usuário não encontrado.");
-  }
-
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
-
-  if (!user) {
-    throw new Error("Usuário não encontrado.");
-  }
-
-  if (!zipCode || !street || !number || !neighborhood || !state || !city) {
-    throw new Error("Campos não preenchidos.");
-  }
-
-  const existingAddress = await db.address.findFirst({
-    where: {
-      userId: user.id,
-    },
-  });
-
-  if (existingAddress) {
-    await db.address.update({
-      where: {
-        id: existingAddress.id,
-      },
-      data: {
-        zipCode,
-        street,
-        number,
-        neighborhood,
-        state,
-        city,
-        additionalInfo,
-      },
-    });
-
-    await db.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        update_at: new Date(),
-      },
-    });
-  } else {
-    await db.address.create({
-      data: {
-        zipCode,
-        street,
-        number,
-        neighborhood,
-        state,
-        city,
-        additionalInfo,
-        userId,
-      },
-    });
-  }
-
-  revalidatePath("/");
-};
-
-export const deleteAddress = async ({
-  userId,
-  addressId,
+  comment,
+  rating,
 }: {
   userId: string;
-  addressId: string;
+  comment: string;
+  rating: string;
 }) => {
   if (!userId) {
     throw new Error("Usuário não encontrado.");
@@ -111,13 +26,87 @@ export const deleteAddress = async ({
     throw new Error("Usuário não encontrado.");
   }
 
-  if (!addressId) {
-    throw new Error("Endereço não encontrado.");
+  if (!comment || !rating) {
+    throw new Error("Campos não preenchidos.");
   }
 
-  await db.address.delete({
+  const existingReview = await db.review.findFirst({
     where: {
-      id: addressId,
+      userId: user.id,
+    },
+  });
+
+  if (existingReview) {
+    await db.review.update({
+      where: {
+        id: existingReview.id,
+      },
+      data: {
+        userId: user.id,
+        comment,
+        rating,
+        update_at: new Date(),
+      },
+    });
+
+    await db.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        update_at: new Date(),
+      },
+    });
+  } else {
+    await db.review.create({
+      data: {
+        userId: user.id,
+        comment,
+        rating,
+      },
+    });
+
+    await db.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        update_at: new Date(),
+      },
+    });
+  }
+
+  revalidatePath("/");
+};
+
+export const deleteReview = async ({
+  userId,
+  reviewId,
+}: {
+  userId: string;
+  reviewId: string;
+}) => {
+  if (!userId) {
+    throw new Error("Usuário não encontrado.");
+  }
+
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new Error("Usuário não encontrado.");
+  }
+
+  if (!reviewId) {
+    throw new Error("Review não encontrado.");
+  }
+
+  await db.review.delete({
+    where: {
+      id: reviewId,
     },
   });
 

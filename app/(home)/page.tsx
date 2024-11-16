@@ -1,20 +1,34 @@
-import Container from "@/app/components/container";
 import HomeWrapper from "@/app/(home)/components/home-wrapper";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
+import { db } from "@/app/lib/prisma";
 
 const Home = async () => {
   const session = await getServerSession(authOptions);
 
-  if (session) {
-    redirect("/admin");
+  if (!session) {
+    redirect("/signin");
+  }
+
+  const user = await db.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+    include: {
+      address: true,
+      review: true,
+    },
+  });
+
+  if (!user) {
+    redirect("/signin");
   }
 
   return (
-    <Container>
-      <HomeWrapper />
-    </Container>
+    <>
+      <HomeWrapper user={user} />
+    </>
   );
 };
 

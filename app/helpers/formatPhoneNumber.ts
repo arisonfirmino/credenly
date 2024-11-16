@@ -1,12 +1,7 @@
-export const formatPhoneNumber = (phoneNumber: string) => {
-  if (phoneNumber.length === 13) {
-    const countryCode = phoneNumber.slice(0, 2);
-    const areaCode = phoneNumber.slice(2, 4);
-    const firstPart = phoneNumber.slice(4, 9);
-    const secondPart = phoneNumber.slice(9);
-
-    return `+${countryCode} (${areaCode}) ${firstPart}-${secondPart}`;
+export const formatPhoneNumber = (phone: string): string => {
+  if (phone.length !== 13) {
+    return phone;
   }
 
-  return phoneNumber;
+  return `+${phone.slice(0, 2)} (${phone.slice(2, 4)}) ${phone.slice(4, 9)}-${phone.slice(9)}`;
 };

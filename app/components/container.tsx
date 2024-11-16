@@ -1,11 +1,14 @@
-import Banner from "@/app/components/banner/banner";
+"use client";
+
+import { usePathname } from "next/navigation";
 
 const Container = ({ children }: { children: React.ReactNode }) => {
+  const pathname = usePathname();
+
   return (
-    <main className="px-5 md:px-20 xl:pl-[448px] xl:pr-0">
-      <div className="fixed left-0 top-0 hidden h-full w-[448px] p-5 xl:block">
-        <Banner />
-      </div>
+    <main
+      className={`relative flex min-h-screen justify-center bg-gray-100 ${pathname === "/" ? "w-full" : "items-center pb-5 pt-20 md:p-0 xl:ml-[448px] xl:w-custom"}`}
+    >
       {children}
     </main>
   );

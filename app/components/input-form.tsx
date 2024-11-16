@@ -1,13 +1,21 @@
-import { InputFormProps } from "@/app/types";
+import { FieldError, UseFormRegisterReturn } from "react-hook-form";
+
+interface InputFormProps {
+  label: string;
+  placeholder: string;
+  type?: string;
+  className?: string;
+  register: UseFormRegisterReturn;
+  error: FieldError | undefined;
+}
 
 const InputForm = ({
   label,
   placeholder,
   type = "text",
-  register,
+  className,
   error,
-  value,
-  showError = true,
+  register,
 }: InputFormProps) => {
   return (
     <div className="flex w-full flex-col gap-1.5">
@@ -16,17 +24,9 @@ const InputForm = ({
         type={type}
         placeholder={placeholder}
         {...register}
-        className={`truncate rounded-xl border border-solid bg-transparent p-2.5 outline-none ${
-          error
-            ? "border-red-600 focus:border-red-600"
-            : value
-              ? "border-green-600 focus:border-green-600"
-              : "border-gray-400 focus:border-blue-700"
-        }`}
+        className={`w-full rounded-xl border border-solid bg-transparent p-2.5 outline-none focus:ring-1 ${className} ${error ? "border-red-600 focus:border-red-600 focus:ring-red-600" : "border-gray-400 focus:border-blue-700 focus:ring-blue-700"}`}
       />
-      {showError && error && (
-        <small className="text-red-600">{error.message}</small>
-      )}
+      {error && <small className="text-red-600">{error.message}</small>}
     </div>
   );
 };

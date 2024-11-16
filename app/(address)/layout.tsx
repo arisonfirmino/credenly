@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/app/lib/auth";
 
-const PrivateAddressLayout = async ({
+const PrivateAddresslayout = async ({
   children,
 }: {
   children: React.ReactNode;
@@ -10,10 +10,10 @@ const PrivateAddressLayout = async ({
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/");
+    redirect("/signin");
   }
 
   return <>{children}</>;
 };
 
-export default PrivateAddressLayout;
+export default PrivateAddresslayout;

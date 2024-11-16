@@ -2,6 +2,7 @@
 
 import nodemailer from "nodemailer";
 import { db } from "@/app/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -32,4 +33,62 @@ export const sendVerificationCode = async (userId: string, email: string) => {
   };
 
   await transporter.sendMail(mailOptions);
+};
+
+export const verifyCode = async (userId: string, code: string) => {
+  const user = await db.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (
+    !user ||
+    user.verificationCode !== code ||
+    !user.codeExpiry ||
+    user.codeExpiry < new Date()
+  ) {
+    return false;
+  }
+  return true;
+};
+
+export const updateEmailVerified = async ({
+  userId,
+  code,
+}: {
+  userId: string;
+  code: string;
+}) => {
+  if (!userId) {
+    throw new Error("Usuário não encontrado.");
+  }
+
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new Error("Usuário não encontrado.");
+  }
+
+  if (
+    user.verificationCode === code &&
+    user.codeExpiry &&
+    user.codeExpiry > new Date()
+  ) {
+    await db.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        emailVerified: true,
+        verificationCode: null,
+        codeExpiry: null,
+        update_at: new Date(),
+      },
+    });
+  }
+
+  revalidatePath("/");
 };

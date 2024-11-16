@@ -1,165 +1,165 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
-import axios from "axios";
-
 import InputForm from "@/app/components/input-form";
 import SkipButton from "@/app/components/skip-button";
 import SubmitButton from "@/app/components/submit-button";
-
-import { createNewAddress } from "@/app/actions/address";
-
-import { AddressFormData } from "@/app/types";
+import axios from "axios";
+import { updateAddress } from "@/app/actions/address";
 
 const schema = yup.object({
-  street: yup.string().required().min(3),
-  neighborhood: yup.string().required().min(3),
-  zipCode: yup.string().required().min(8).max(8),
-  state: yup.string().required().min(3),
-  city: yup.string().required().min(3),
-  additionalInfo: yup.string().min(3),
-  number: yup.number().required(),
+  zipCode: yup
+    .string()
+    .required("Este campo é obrigatório.")
+    .length(8, "O CEP deve ter 8 dígitos.")
+    .matches(/^\d+$/, "O CEP deve conter apenas números."),
+  street: yup.string().required("Este campo é obrigatório."),
+  number: yup
+    .number()
+    .typeError("Este campo só aceita números.")
+    .required("Este campo é obrigatório."),
+  neighborhood: yup.string().required("Este campo é obrigatório."),
+  state: yup
+    .string()
+    .required("Este campo é obrigatório.")
+    .length(2, "O estado deve ter 2 caracteres."),
+  city: yup.string().required("Este campo é obrigatório."),
+  additionalInfo: yup.string(),
 });
+
+type FormData = yup.InferType<typeof schema>;
 
 const AddressForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const { data: session } = useSession();
+
+  const pathname = usePathname();
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
-    watch,
-    reset,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const zipCodeValue = watch("zipCode");
+  const fetchAddress = async (zipCode: string) => {
+    if (zipCode.length !== 8) return;
 
-  useEffect(() => {
-    const fetchAddressData = async (zipCode: string) => {
-      const response = await axios.get(
-        `https://viacep.com.br/ws/${zipCode}/json/`,
-      );
-      const { logradouro, bairro, uf, localidade } = response.data;
+    const { data } = await axios.get(
+      `https://viacep.com.br/ws/${zipCode}/json/`,
+    );
 
-      setValue("street", logradouro);
-      setValue("neighborhood", bairro);
-      setValue("state", uf);
-      setValue("city", localidade);
-    };
-
-    if (zipCodeValue && zipCodeValue.length === 8) {
-      fetchAddressData(zipCodeValue);
+    if (data.erro) {
+      return;
     }
-  }, [zipCodeValue, setValue]);
 
-  const onSubmit = async (data: AddressFormData) => {
+    setValue("street", data.logradouro);
+    setValue("neighborhood", data.bairro);
+    setValue("city", data.localidade);
+    setValue("state", data.uf);
+  };
+
+  const onSubmit = async (data: FormData) => {
     if (session) {
       const formData = {
-        userId: session?.user.id,
+        userId: session.user.id,
+        zipCode: data.zipCode,
         street: data.street,
         neighborhood: data.neighborhood,
-        zipCode: Number(data.zipCode),
-        state: data.state,
         city: data.city,
+        state: data.state,
+        number: String(data.number),
         additionalInfo: data.additionalInfo,
-        number: Number(data.number),
       };
 
       setIsLoading(true);
 
-      await createNewAddress(formData).then(() => {
-        reset();
-        setIsLoading(false);
-        router.replace("/admin");
-      });
+      await updateAddress(formData);
+
+      setIsLoading(false);
+      reset();
+
+      if (pathname === "/") {
+        return;
+      } else {
+        router.replace("/");
+      }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
-      <div className="space-y-5">
-        <div className="w-full md:max-w-52">
-          <InputForm
-            label="CEP"
-            placeholder="000000"
-            register={{ ...register("zipCode") }}
-            showError={false}
-            error={errors.zipCode}
-          />
-        </div>
-
-        <div className="flex flex-col gap-5 md:flex-row">
-          <InputForm
-            label="Rua"
-            placeholder="Nome da rua"
-            register={{ ...register("street") }}
-            showError={false}
-            error={errors.street}
-          />
-          <InputForm
-            label="Bairro"
-            placeholder="Nome do bairro"
-            register={{ ...register("neighborhood") }}
-            showError={false}
-            error={errors.neighborhood}
-          />
-
-          <div className="w-full max-w-24">
-            <InputForm
-              label="Número"
-              placeholder="Nº"
-              type="number"
-              register={{ ...register("number") }}
-              showError={false}
-              error={errors.number}
-            />
-          </div>
-        </div>
-
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className={`w-full space-y-5 ${pathname === "/" ? "text-sm" : "text-base"}`}
+    >
+      <InputForm
+        label="CEP"
+        placeholder="00000000"
+        register={{
+          ...register("zipCode", {
+            onBlur: (e) => fetchAddress(e.target.value),
+          }),
+        }}
+        error={errors.zipCode}
+        className={pathname === "/" ? "" : "md:max-w-[210.67px]"}
+      />
+      <div
+        className={`flex flex-col gap-5 ${pathname === "/" ? "flex-col" : "md:flex-row"}`}
+      >
         <InputForm
-          label="Complemento"
-          placeholder="Ex: casa 2, fundos"
-          register={{ ...register("additionalInfo") }}
-          showError={false}
-          error={errors.additionalInfo}
+          label="Nome da rua"
+          placeholder="Nome da rua"
+          register={{ ...register("street") }}
+          error={errors.street}
         />
-
-        <div className="flex flex-col gap-5 md:flex-row">
-          <InputForm
-            label="Estado"
-            placeholder="Selecione o estado"
-            register={{ ...register("state") }}
-            showError={false}
-            error={errors.state}
-          />
-          <InputForm
-            label="Cidade"
-            placeholder="Nome da cidade"
-            register={{ ...register("city") }}
-            showError={false}
-            error={errors.city}
-          />
-        </div>
+        <InputForm
+          label="Rua"
+          placeholder="Nome do bairro"
+          register={{ ...register("neighborhood") }}
+          error={errors.neighborhood}
+        />
+        <InputForm
+          label="Número"
+          placeholder="Número"
+          register={{ ...register("number") }}
+          error={errors.number}
+        />
       </div>
-
-      <div className="flex items-center justify-end gap-5">
-        <SubmitButton isLoading={isLoading} showIcon={false} className="w-fit">
+      <InputForm
+        label="Complemento"
+        placeholder="Ex: casa 2, fundos"
+        register={{ ...register("additionalInfo") }}
+        error={errors.additionalInfo}
+      />
+      <div className="flex gap-5">
+        <InputForm
+          label="Estado"
+          placeholder="Selecione o estado"
+          register={{ ...register("state") }}
+          error={errors.state}
+        />
+        <InputForm
+          label="Cidade"
+          placeholder="Nome da cidade"
+          register={{ ...register("city") }}
+          error={errors.city}
+        />
+      </div>
+      <div className="flex justify-end gap-5">
+        <SubmitButton disable={isLoading}>
           {isLoading ? "Carregando" : "Cadastrar"}
         </SubmitButton>
-        <SkipButton href="/admin" />
+        {pathname === "/" ? "" : <SkipButton href="/" />}
       </div>
     </form>
   );

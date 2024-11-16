@@ -15,8 +15,8 @@ model User {
   phone            String?   @unique
   password         String
   address          Address[]
+  review           Review[]
   emailVerified    Boolean   @default(false)
-  phoneVerified    Boolean   @default(false)
   verificationCode String?
   codeExpiry       DateTime?
   created_at       DateTime  @default(now())
@@ -27,9 +27,9 @@ model User {
 
 model Address {
   id             String  @id @default(uuid())
-  zipCode        Int
+  zipCode        String
   street         String
-  number         Int
+  number         String
   neighborhood   String
   state          String
   city           String
@@ -38,4 +38,16 @@ model Address {
   userId         String
 
   @@map("address")
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  comment    String
+  rating     String
+  User       User     @relation(fields: [userId], references: [id])
+  userId     String
+  created_at DateTime @default(now())
+  update_at  DateTime @default(now())
+
+  @@map("reviews")
 }

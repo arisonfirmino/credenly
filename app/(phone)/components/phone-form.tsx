@@ -1,94 +1,75 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-
-import { usePathname, useRouter } from "next/navigation";
-
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
 import SkipButton from "@/app/components/skip-button";
 import SubmitButton from "@/app/components/submit-button";
-
+import { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-
-import { updatePhoneNumber } from "@/app/actions/phone";
-
-import { PhoneFormProps } from "@/app/types";
+import { updatePhoneNumber } from "@/app/actions/user";
 
 const schema = yup.object({
-  phoneNumber: yup
+  phone: yup
     .string()
-    .required("O número de telefone é obrigatório.")
-    .min(11, "O número de telefone precisa ter 11 números."),
+    .required("Este campo é obrigatório.")
+    .length(13, "O número de telefone deve conter 13 dígitos."),
 });
 
-const PhoneForm = ({ closeComponent }: PhoneFormProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+type FormData = yup.InferType<typeof schema>;
 
-  const router = useRouter();
-  const pathname = usePathname();
+const PhoneForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession();
 
+  const router = useRouter();
+
   const {
     handleSubmit,
-
-    reset,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data: { phoneNumber: string }) => {
+  const onSubmit = async (data: FormData) => {
     if (session) {
-      const formData = {
-        userId: session.user.id,
-        phoneNumber: data.phoneNumber,
-      };
-
       setIsLoading(true);
 
-      await updatePhoneNumber(formData).then(() => {
-        reset();
-        setIsLoading(false);
+      await updatePhoneNumber({ userId: session.user.id, phone: data.phone });
 
-        if (pathname === "/admin") {
-          if (closeComponent) {
-            closeComponent();
-          }
-
-          return;
-        } else {
-          router.replace("/address");
-        }
-      });
+      setIsLoading(false);
+      reset();
+      router.replace("/address");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="w-full max-w-md space-y-5"
+    >
       <div>
         <PhoneInput
           country={"br"}
-          onChange={(value) => setValue("phoneNumber", value)}
+          onChange={(value) => setValue("phone", value)}
           placeholder="(99) 99999-9999"
-          inputClass={`${errors.phoneNumber ? "border-red-600" : ""}`}
+          inputClass={`${errors.phone ? "border-red-600" : ""}`}
         />
-        {errors.phoneNumber && (
-          <small className="text-red-600">{errors.phoneNumber.message}</small>
+        {errors.phone && (
+          <small className="text-red-600">{errors.phone.message}</small>
         )}
       </div>
-
-      <div className="flex items-center justify-end gap-5">
-        <SubmitButton isLoading={isLoading} showIcon={false} className="w-fit">
-          {isLoading ? "Carregando" : "Atualizar"}
+      <div className="flex justify-end gap-5">
+        <SubmitButton disable={isLoading}>
+          {isLoading ? "Carregando" : "Cadastrar"}
         </SubmitButton>
-        {pathname === "/admin" ? "" : <SkipButton href="/address" />}
+        <SkipButton href="/address" />
       </div>
     </form>
   );
