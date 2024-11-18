@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import InfoRow from "@/app/(home)/components/info-row";
-import UpdatePhoneForm from "@/app/(home)/components/update_forms/update-phone-form";
 import Sonner from "@/app/components/sonner";
 import { formatPhoneNumber } from "@/app/helpers/formatPhoneNumber";
 import { User } from "@prisma/client";
+import PhoneForm from "@/app/(phone)/components/phone-form";
 
 interface PhoneSectionProps {
   user: Pick<User, "phone">;
@@ -18,7 +18,7 @@ const PhoneSection = ({ user }: PhoneSectionProps) => {
   return (
     <>
       {isPhoneFormVisible ? (
-        <UpdatePhoneForm
+        <PhoneForm
           closeComponent={() => setIsPhoneFormVisible(false)}
           showSonner={setIsPhoneUpdated}
         />

@@ -4,15 +4,19 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Address } from "@prisma/client";
 import { LoaderCircleIcon, Trash2Icon } from "lucide-react";
-import Link from "next/link";
 import { deleteAddress } from "@/app/actions/address";
 
 interface AddressDataProps {
   address: Address;
   showSonner: (value: boolean) => void;
+  setIsAddressFormVisible: (value: boolean) => void;
 }
 
-const AddressData = ({ address, showSonner }: AddressDataProps) => {
+const AddressData = ({
+  address,
+  showSonner,
+  setIsAddressFormVisible,
+}: AddressDataProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession();
@@ -45,13 +49,12 @@ const AddressData = ({ address, showSonner }: AddressDataProps) => {
       </div>
 
       <div className="flex justify-end gap-5">
-        <Link
-          href="/address"
-          prefetch
+        <button
+          onClick={() => setIsAddressFormVisible(true)}
           className="jetbrains-mono rounded-xl bg-blue-700 px-2.5 py-1.5 text-sm uppercase text-white active:bg-gray-400"
         >
           Atualizar
-        </Link>
+        </button>
         <button
           disabled={isLoading}
           onClick={handleDeleteAddress}

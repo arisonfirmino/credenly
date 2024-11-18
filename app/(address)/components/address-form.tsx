@@ -11,6 +11,7 @@ import SkipButton from "@/app/components/skip-button";
 import SubmitButton from "@/app/components/submit-button";
 import axios from "axios";
 import { updateAddress } from "@/app/actions/address";
+import CancelButton from "@/app/(home)/components/update_forms/cancel-button";
 
 const schema = yup.object({
   zipCode: yup
@@ -36,9 +37,10 @@ type FormData = yup.InferType<typeof schema>;
 
 interface AddressFormProps {
   showSonner?: (value: boolean) => void;
+  closeComponent?: () => void;
 }
 
-const AddressForm = ({ showSonner }: AddressFormProps) => {
+const AddressForm = ({ showSonner, closeComponent }: AddressFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession();
@@ -92,6 +94,10 @@ const AddressForm = ({ showSonner }: AddressFormProps) => {
 
       setIsLoading(false);
       reset();
+
+      if (closeComponent) {
+        closeComponent();
+      }
 
       if (showSonner) {
         showSonner(true);
@@ -170,7 +176,16 @@ const AddressForm = ({ showSonner }: AddressFormProps) => {
         <SubmitButton disable={isLoading}>
           {isLoading ? "Carregando" : "Cadastrar"}
         </SubmitButton>
-        {pathname === "/" ? "" : <SkipButton href="/" />}
+        {pathname === "/" ? (
+          closeComponent && (
+            <CancelButton
+              closeComponent={closeComponent}
+              isLoading={isLoading}
+            />
+          )
+        ) : (
+          <SkipButton href="/" />
+        )}
       </div>
     </form>
   );

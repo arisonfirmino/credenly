@@ -17,9 +17,11 @@ interface AddressSectionProps {
 }
 
 const AddressSection = ({ user }: AddressSectionProps) => {
+  const [isAddressFormVisible, setIsAddressFormVisible] = useState(false);
   const [isAddressVisible, setIsAddressVisible] = useState(false);
   const [isAddressUpdated, setIsAddressUpdated] = useState(false);
   const [isAddressDeleted, setIsAddressDeleted] = useState(false);
+
   return (
     <>
       <ActionButton
@@ -35,9 +37,12 @@ const AddressSection = ({ user }: AddressSectionProps) => {
       {isAddressVisible &&
         (user.address.length === 0 ? (
           <AddressForm showSonner={setIsAddressUpdated} />
+        ) : isAddressFormVisible ? (
+          <AddressForm closeComponent={() => setIsAddressFormVisible(false)} />
         ) : (
           <AddressData
             address={user.address[0]}
+            setIsAddressFormVisible={setIsAddressFormVisible}
             showSonner={setIsAddressDeleted}
           />
         ))}

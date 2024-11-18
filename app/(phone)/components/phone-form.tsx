@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,6 +11,8 @@ import { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { updatePhoneNumber } from "@/app/actions/user";
+import CancelButton from "@/app/(home)/components/update_forms/cancel-button";
+import { ArrowRightLeftIcon, LoaderCircleIcon } from "lucide-react";
 
 const schema = yup.object({
   phone: yup
@@ -21,11 +23,17 @@ const schema = yup.object({
 
 type FormData = yup.InferType<typeof schema>;
 
-const PhoneForm = () => {
+interface PhoneFormProps {
+  closeComponent?: () => void;
+  showSonner?: (value: boolean) => void;
+}
+
+const PhoneForm = ({ closeComponent, showSonner }: PhoneFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession();
 
+  const pathname = usePathname();
   const router = useRouter();
 
   const {
@@ -45,14 +53,34 @@ const PhoneForm = () => {
 
       setIsLoading(false);
       reset();
-      router.replace("/address");
+
+      if (closeComponent) {
+        closeComponent();
+      }
+
+      if (showSonner) {
+        showSonner(true);
+        setTimeout(() => {
+          showSonner(false);
+        }, 3500);
+      }
+
+      if (pathname === "/") {
+        return;
+      } else {
+        router.replace("/address");
+      }
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-md space-y-5"
+      className={
+        pathname === "/"
+          ? "flex items-center justify-between"
+          : "w-full max-w-md space-y-5"
+      }
     >
       <div>
         <PhoneInput
@@ -67,9 +95,28 @@ const PhoneForm = () => {
       </div>
       <div className="flex justify-end gap-5">
         <SubmitButton disable={isLoading}>
-          {isLoading ? "Carregando" : "Cadastrar"}
+          {pathname === "/" ? (
+            <>
+              {isLoading ? (
+                <LoaderCircleIcon size={16} className="animate-spin" />
+              ) : (
+                <ArrowRightLeftIcon size={16} />
+              )}
+            </>
+          ) : (
+            <>{isLoading ? "Carregando" : "Cadastrar"}</>
+          )}
         </SubmitButton>
-        <SkipButton href="/address" />
+        {pathname === "/" ? (
+          closeComponent && (
+            <CancelButton
+              closeComponent={closeComponent}
+              isLoading={isLoading}
+            />
+          )
+        ) : (
+          <SkipButton href="/address" />
+        )}
       </div>
     </form>
   );
