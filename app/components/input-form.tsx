@@ -1,7 +1,7 @@
 import { FieldError, UseFormRegisterReturn } from "react-hook-form";
 
 interface InputFormProps {
-  label: string;
+  label?: string;
   placeholder: string;
   type?: string;
   className?: string;
@@ -19,7 +19,7 @@ const InputForm = ({
 }: InputFormProps) => {
   return (
     <div className="flex w-full flex-col gap-1.5">
-      <label className="uppercase text-gray-400">{label}</label>
+      {label && <label className="uppercase text-gray-400">{label}</label>}
       <input
         type={type}
         placeholder={placeholder}

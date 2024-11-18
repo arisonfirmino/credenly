@@ -5,12 +5,14 @@ interface InfoRowProps {
   children: React.ReactNode;
   className?: string;
   showInteractionButton?: boolean;
+  setUpdateForm: (value: boolean) => void;
 }
 
 const InfoRow = ({
   children,
   className,
   showInteractionButton = true,
+  setUpdateForm,
 }: InfoRowProps) => {
   return (
     <div
@@ -18,7 +20,10 @@ const InfoRow = ({
     >
       {children}
       <div className="flex items-center gap-2.5 text-gray-400">
-        <button className="active:text-blue-700">
+        <button
+          onClick={() => setUpdateForm(true)}
+          className="active:text-blue-700"
+        >
           <SquarePenIcon size={14} />
         </button>
         {showInteractionButton && (

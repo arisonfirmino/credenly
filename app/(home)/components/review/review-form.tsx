@@ -16,11 +16,12 @@ const schema = yup.object({
 
 type FormData = yup.InferType<typeof schema>;
 
-const ReviewForm = ({
-  setShowReview,
-}: {
+interface ReviewFormProps {
   setShowReview: (value: boolean) => void;
-}) => {
+  showSonner: (value: boolean) => void;
+}
+
+const ReviewForm = ({ setShowReview, showSonner }: ReviewFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession();
@@ -51,6 +52,10 @@ const ReviewForm = ({
       reset();
       setShowReview(false);
       setIsLoading(false);
+      showSonner(true);
+      setTimeout(() => {
+        showSonner(false);
+      }, 3500);
     }
   };
 

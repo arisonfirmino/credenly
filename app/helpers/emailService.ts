@@ -33,6 +33,8 @@ export const sendVerificationCode = async (userId: string, email: string) => {
   };
 
   await transporter.sendMail(mailOptions);
+
+  revalidatePath("/");
 };
 
 export const verifyCode = async (userId: string, code: string) => {

@@ -5,7 +5,12 @@ import { useSession } from "next-auth/react";
 import { LoaderCircle, Trash2Icon } from "lucide-react";
 import { deleteReview } from "@/app/actions/review";
 
-const DeleteReviewButton = ({ reviewId }: { reviewId: string }) => {
+interface DeleteReviewButton {
+  reviewId: string;
+  showSonner: (value: boolean) => void;
+}
+
+const DeleteReviewButton = ({ reviewId, showSonner }: DeleteReviewButton) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession();
@@ -17,6 +22,10 @@ const DeleteReviewButton = ({ reviewId }: { reviewId: string }) => {
       await deleteReview({ userId: session.user.id, reviewId: reviewId });
 
       setIsLoading(false);
+      showSonner(true);
+      setTimeout(() => {
+        showSonner(false);
+      }, 3500);
     }
   };
 

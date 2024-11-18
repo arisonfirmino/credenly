@@ -120,3 +120,40 @@ export const updateEmailVerified = async ({
 
   revalidatePath("/");
 };
+
+export const updateUserName = async ({
+  userId,
+  firstName,
+  lastName,
+}: {
+  userId: string;
+  firstName: string;
+  lastName: string;
+}) => {
+  if (!userId) {
+    throw new Error("Usuário não encontrado.");
+  }
+
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new Error("Usuário não encontrado.");
+  }
+
+  await db.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      firstName: firstName,
+      lastName: lastName,
+      update_at: new Date(),
+    },
+  });
+
+  revalidatePath("/");
+};

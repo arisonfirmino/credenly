@@ -9,9 +9,10 @@ import { deleteAddress } from "@/app/actions/address";
 
 interface AddressDataProps {
   address: Address;
+  showSonner: (value: boolean) => void;
 }
 
-const AddressData = ({ address }: AddressDataProps) => {
+const AddressData = ({ address, showSonner }: AddressDataProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession();
@@ -23,6 +24,10 @@ const AddressData = ({ address }: AddressDataProps) => {
       await deleteAddress({ userId: session.user.id, addressId: address.id });
 
       setIsLoading(false);
+      showSonner(true);
+      setTimeout(() => {
+        showSonner(false);
+      }, 3500);
     }
   };
 

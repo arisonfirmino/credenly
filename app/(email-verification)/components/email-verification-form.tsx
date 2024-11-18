@@ -21,7 +21,15 @@ const schema = yup.object({
 
 type FormData = yup.InferType<typeof schema>;
 
-const EmailVerificationForm = ({ hasCode }: { hasCode: string }) => {
+interface EmailVerificationFormProps {
+  hasCode: string;
+  showSonner?: (value: boolean) => void;
+}
+
+const EmailVerificationForm = ({
+  hasCode,
+  showSonner,
+}: EmailVerificationFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession();
@@ -61,6 +69,14 @@ const EmailVerificationForm = ({ hasCode }: { hasCode: string }) => {
 
       setIsLoading(false);
       reset();
+
+      if (showSonner) {
+        showSonner(true);
+        setTimeout(() => {
+          showSonner(false);
+        }, 3500);
+      }
+
       if (pathname === "/") {
         return;
       } else {

@@ -34,7 +34,11 @@ const schema = yup.object({
 
 type FormData = yup.InferType<typeof schema>;
 
-const AddressForm = () => {
+interface AddressFormProps {
+  showSonner?: (value: boolean) => void;
+}
+
+const AddressForm = ({ showSonner }: AddressFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession();
@@ -88,6 +92,13 @@ const AddressForm = () => {
 
       setIsLoading(false);
       reset();
+
+      if (showSonner) {
+        showSonner(true);
+        setTimeout(() => {
+          showSonner(false);
+        }, 3500);
+      }
 
       if (pathname === "/") {
         return;
