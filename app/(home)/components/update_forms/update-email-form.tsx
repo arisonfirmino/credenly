@@ -9,6 +9,8 @@ import InputForm from "@/app/components/input-form";
 import SubmitButton from "@/app/components/submit-button";
 import { ArrowRightLeftIcon, LoaderCircleIcon } from "lucide-react";
 import CancelButton from "@/app/(home)/components/update_forms/cancel-button";
+import { updateUserEmail } from "@/app/actions/user";
+import { checkEmailAvailability } from "@/app/helpers/existingUser";
 
 const schema = yup.object({
   email: yup
@@ -33,6 +35,7 @@ const UpdateEmailForm = ({ closeComponent, showSonner }: UpdateEmailProps) => {
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -42,7 +45,20 @@ const UpdateEmailForm = ({ closeComponent, showSonner }: UpdateEmailProps) => {
     if (session) {
       setIsLoading(true);
 
-      console.log(data);
+      const isEmailAvailable = await checkEmailAvailability({
+        email: data.email,
+      });
+
+      if (!isEmailAvailable) {
+        setError("email", {
+          type: "manual",
+          message: "Este e-mail já está em uso, por favor tente outro.",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      await updateUserEmail({ userId: session.user.id, email: data.email });
 
       reset();
       setIsLoading(false);
