@@ -7,7 +7,7 @@ import Sonner from "@/app/components/sonner";
 import { User } from "@prisma/client";
 
 interface EmailVerificationSectionProps {
-  user: Pick<User, "emailVerified" | "verificationCode">;
+  user: Pick<User, "email" | "emailVerified" | "verificationCode">;
 }
 
 const EmailVerificationSection = ({ user }: EmailVerificationSectionProps) => {
@@ -37,6 +37,7 @@ const EmailVerificationSection = ({ user }: EmailVerificationSectionProps) => {
         ) : (
           <EmailVerificationForm
             hasCode={user.verificationCode || ""}
+            email={user.email}
             showSonner={setIsEmailVerified}
           />
         ))}

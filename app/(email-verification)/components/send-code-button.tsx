@@ -3,12 +3,18 @@
 import { useSession } from "next-auth/react";
 import { sendVerificationCode } from "@/app/helpers/emailService";
 
-const SendCodeButton = ({ hasCode }: { hasCode: string }) => {
+const SendCodeButton = ({
+  hasCode,
+  email,
+}: {
+  hasCode: string;
+  email: string;
+}) => {
   const { data: session } = useSession();
 
   const handleSendCodeClick = async () => {
     if (session) {
-      await sendVerificationCode(session.user.id, session.user.email);
+      await sendVerificationCode({ userId: session.user.id, email: email });
     }
   };
 

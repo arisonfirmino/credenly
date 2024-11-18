@@ -41,7 +41,10 @@ const EmailVerification = async () => {
           </Link>
         </>
       ) : (
-        <EmailVerificationForm hasCode={user.verificationCode || ""} />
+        <EmailVerificationForm
+          hasCode={user.verificationCode || ""}
+          email={user.email}
+        />
       )}
     </>
   );

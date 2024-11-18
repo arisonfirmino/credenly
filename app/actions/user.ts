@@ -185,6 +185,8 @@ export const updateUserEmail = async ({
     },
     data: {
       email: email,
+      emailVerified: false,
+      verificationCode: null,
       update_at: new Date(),
     },
   });

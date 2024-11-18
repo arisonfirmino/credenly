@@ -23,12 +23,14 @@ type FormData = yup.InferType<typeof schema>;
 
 interface EmailVerificationFormProps {
   hasCode: string;
+  email: string;
   showSonner?: (value: boolean) => void;
 }
 
 const EmailVerificationForm = ({
   hasCode,
   showSonner,
+  email,
 }: EmailVerificationFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -97,7 +99,7 @@ const EmailVerificationForm = ({
           register={{ ...register("code") }}
           error={errors.code}
         />
-        <SendCodeButton hasCode={hasCode} />
+        <SendCodeButton hasCode={hasCode} email={email} />
       </div>
       <div className="flex justify-end gap-5">
         <SubmitButton disable={isLoading}>

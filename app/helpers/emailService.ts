@@ -12,7 +12,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendVerificationCode = async (userId: string, email: string) => {
+export const sendVerificationCode = async ({
+  userId,
+  email,
+}: {
+  userId: string;
+  email: string;
+}) => {
   const verificationCode = Math.floor(
     100000 + Math.random() * 900000,
   ).toString();
