@@ -1,3 +1,5 @@
+![Preview](https://utfs.io/f/FJxfrM1suimW4sBX0ZWXSLEbcIKrO5Vv63y702AewYdZpPFG)
+
 Credenly é uma aplicação completa voltada para autenticação de usuários, oferecendo um sistema robusto de login e registro. O projeto foi concebido como uma forma prática de aplicar minhas habilidades de programação, abordando problemas reais e desenvolvendo soluções que fazem parte do dia a dia em aplicações modernas.
 
 A principal funcionalidade do Credenly é o cadastramento de novos usuários, utilizando formulários cuidadosamente projetados e validados para garantir segurança e eficiência. Além disso, a aplicação permite atualizar informações de usuários previamente registrados, atendendo cenários comuns em sistemas de autenticação e gerenciamento de perfis.
