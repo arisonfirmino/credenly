@@ -67,12 +67,10 @@ const SignInForm = () => {
       redirect: false,
       email: data.email,
       password: data.password,
-    }).then(() => {
-      setIsLoading(false);
-      router.replace("/");
     });
 
     setIsLoading(false);
+    router.replace("/");
   };
 
   return (

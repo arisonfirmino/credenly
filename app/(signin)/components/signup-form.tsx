@@ -89,18 +89,17 @@ const SignUpForm = () => {
       return;
     }
 
-    await createNewUser(formData).then(async () => {
-      setIsLoading(false);
-      reset();
+    await createNewUser(formData);
 
-      await signIn("credentials", {
-        redirect: false,
-        email: data.email,
-        password: data.password,
-      });
-
-      router.replace("/email-verification");
+    await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: data.password,
     });
+
+    setIsLoading(false);
+    reset();
+    router.replace("/email-verification");
   };
 
   return (
