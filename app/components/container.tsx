@@ -1,15 +1,9 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-
 const Container = ({ children }: { children: React.ReactNode }) => {
-  const pathname = usePathname();
-
   return (
-    <main
-      className={`relative flex min-h-screen justify-center bg-gray-100 ${pathname === "/" ? "w-full" : "items-center pb-5 pt-20 xl:ml-[448px] xl:w-custom"}`}
-    >
-      {children}
+    <main className="flex min-h-screen w-full items-center justify-center py-5">
+      <div className="flex w-full max-w-xl flex-col gap-5 px-5 md:px-0">
+        {children}
+      </div>
     </main>
   );
 };

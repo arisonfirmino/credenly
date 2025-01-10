@@ -3,18 +3,16 @@
 import { db } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-export const createNewreview = async ({
+export const addReview = async ({
   userId,
-  comment,
+  text,
   rating,
 }: {
   userId: string;
-  comment: string;
-  rating: string;
+  text: string;
+  rating: number;
 }) => {
-  if (!userId) {
-    throw new Error("Usuário não encontrado.");
-  }
+  if (!userId) throw new Error("ID de usuário não fornecido.");
 
   const user = await db.user.findUnique({
     where: {
@@ -22,100 +20,35 @@ export const createNewreview = async ({
     },
   });
 
-  if (!user) {
-    throw new Error("Usuário não encontrado.");
-  }
+  if (!user) throw new Error("Usuário não localizado.");
 
-  if (!comment || !rating) {
-    throw new Error("Campos não preenchidos.");
-  }
+  if (!text || !rating) throw new Error("Campos não preenchidos.");
 
-  const existingReview = await db.review.findFirst({
-    where: {
-      userId: user.id,
+  await db.review.create({
+    data: {
+      userId,
+      text,
+      rating,
     },
   });
-
-  if (existingReview) {
-    await db.review.update({
-      where: {
-        id: existingReview.id,
-      },
-      data: {
-        userId: user.id,
-        comment,
-        rating,
-        update_at: new Date(),
-      },
-    });
-
-    await db.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        update_at: new Date(),
-      },
-    });
-  } else {
-    await db.review.create({
-      data: {
-        userId: user.id,
-        comment,
-        rating,
-      },
-    });
-
-    await db.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        update_at: new Date(),
-      },
-    });
-  }
 
   revalidatePath("/");
 };
 
-export const deleteReview = async ({
-  userId,
-  reviewId,
-}: {
-  userId: string;
-  reviewId: string;
-}) => {
-  if (!userId) {
-    throw new Error("Usuário não encontrado.");
-  }
+export const deleteReview = async ({ id }: { id: string }) => {
+  if (!id) throw new Error("ID da avaliação não fornecido.");
 
-  const user = await db.user.findUnique({
+  const review = await db.review.findUnique({
     where: {
-      id: userId,
+      id,
     },
   });
 
-  if (!user) {
-    throw new Error("Usuário não encontrado.");
-  }
-
-  if (!reviewId) {
-    throw new Error("Review não encontrado.");
-  }
+  if (!review) throw new Error("Avaliação não encontrada.");
 
   await db.review.delete({
     where: {
-      id: reviewId,
-    },
-  });
-
-  await db.user.update({
-    where: {
-      id: user.id,
-    },
-    data: {
-      update_at: new Date(),
+      id,
     },
   });
 

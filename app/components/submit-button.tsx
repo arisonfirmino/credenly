@@ -1,19 +1,28 @@
-const SubmitButton = ({
-  children,
-  className,
-  disable,
-}: {
+import { cn } from "@/app/lib/utils";
+
+import { Button } from "@/app/components/ui/button";
+
+import { LoaderCircleIcon, MoveRightIcon } from "lucide-react";
+
+interface SubmitButtonProps {
   children: React.ReactNode;
-  className?: string;
-  disable: boolean;
-}) => {
+  isLoading: boolean;
+}
+
+const SubmitButton = ({ children, isLoading }: SubmitButtonProps) => {
   return (
-    <button
-      disabled={disable}
-      className={`jetbrains-mono flex items-center gap-5 rounded-xl px-5 py-2.5 uppercase text-white active:bg-gray-400 ${disable ? "cursor-not-allowed bg-gray-400" : "bg-blue-700"} ${className}`}
+    <Button
+      type="submit"
+      disabled={isLoading}
+      className={cn("w-full justify-between")}
     >
-      {children}
-    </button>
+      {isLoading ? "Carregando" : children}
+      {isLoading ? (
+        <LoaderCircleIcon className="animate-spin" />
+      ) : (
+        <MoveRightIcon />
+      )}
+    </Button>
   );
 };
 

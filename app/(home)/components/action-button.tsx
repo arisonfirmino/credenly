@@ -1,28 +1,27 @@
 "use client";
 
+import { cn } from "@/app/lib/utils";
+
+import { Button } from "@/app/components/ui/button";
+
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 
 interface ActionButtonProps {
   children: React.ReactNode;
-  showComponent: boolean;
-  handleClick: () => void;
-  className?: string;
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
 }
 
-const ActionButton = ({
-  children,
-  handleClick,
-  showComponent,
-  className,
-}: ActionButtonProps) => {
+const ActionButton = ({ children, isOpen, setIsOpen }: ActionButtonProps) => {
   return (
-    <button
-      onClick={handleClick}
-      className={`jetbrains-mono flex w-full items-center justify-between border-b border-solid p-2.5 text-sm uppercase ${showComponent ? "border-blue-700 text-blue-700" : "border-gray-400 text-gray-400"} ${className}`}
+    <Button
+      variant="action"
+      onClick={() => setIsOpen(!isOpen)}
+      className={cn(isOpen && "border-primary text-primary")}
     >
       {children}
-      {showComponent ? <ArrowUpIcon size={14} /> : <ArrowDownIcon size={14} />}
-    </button>
+      {isOpen ? <ArrowUpIcon /> : <ArrowDownIcon />}
+    </Button>
   );
 };
 

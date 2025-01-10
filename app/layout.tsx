@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ContainerWrapper from "@/app/components/container-wrapper";
-import AuthProvider from "@/app/providers/auth";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+import { Toaster } from "@/app/components/ui/sonner";
+
+import AuthProvider from "@/app/providers/auth";
+import Container from "@/app/components/container";
+
+const geistSans = Geist({
   variable: "--font-geist-sans",
-  weight: "100 900",
+  subsets: ["latin"],
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+
+const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  weight: "100 900",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -31,7 +33,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <ContainerWrapper>{children}</ContainerWrapper>
+          <Container>{children}</Container>
+          <Toaster />
         </AuthProvider>
       </body>
     </html>

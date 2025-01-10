@@ -1,39 +1,33 @@
-import { CopyIcon, SquarePenIcon } from "lucide-react";
-import { handleCopy } from "@/app/helpers/handleCopy";
+"use client";
+
+import CopyButton from "@/app/(home)/components/copy-button";
+
+import { EditIcon } from "lucide-react";
 
 interface InfoRowProps {
   children: React.ReactNode;
+  type: "name" | "email" | "phone";
+  openComponent: () => void;
   className?: string;
-  showInteractionButton?: boolean;
-  setUpdateForm: (value: boolean) => void;
 }
 
 const InfoRow = ({
   children,
+  type,
+  openComponent,
   className,
-  showInteractionButton = true,
-  setUpdateForm,
 }: InfoRowProps) => {
   return (
     <div
-      className={`flex justify-between rounded border border-solid border-gray-400 p-2.5 text-gray-400 hover:text-blue-700 ${className}`}
+      className={`group flex h-10 items-center justify-between rounded-md border px-3 py-2 ring-ring hover:ring-2 hover:ring-offset-2 ${className} ${type === "name" ? "font-medium capitalize" : "text-muted-foreground hover:text-foreground"}`}
     >
       {children}
-      <div className="flex items-center gap-2.5 text-gray-400">
-        <button
-          onClick={() => setUpdateForm(true)}
-          className="active:text-blue-700"
-        >
-          <SquarePenIcon size={14} />
+
+      <div className="flex items-center gap-5 text-muted-foreground group-hover:text-foreground">
+        <CopyButton content={children} />
+        <button onClick={openComponent}>
+          <EditIcon size={16} />
         </button>
-        {showInteractionButton && (
-          <button
-            onClick={() => handleCopy({ content: children })}
-            className="active:text-blue-700"
-          >
-            <CopyIcon size={14} />
-          </button>
-        )}
       </div>
     </div>
   );

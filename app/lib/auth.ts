@@ -1,7 +1,6 @@
 import { db } from "@/app/lib/prisma";
 import NextAuth, { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -12,7 +11,7 @@ export const authOptions: AuthOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) {
+        if (!credentials?.email || !credentials?.password) {
           throw new Error("Campos não preenchidos.");
         }
 
@@ -26,12 +25,7 @@ export const authOptions: AuthOptions = {
           throw new Error("Usuário não cadastrado.");
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password,
-        );
-
-        if (!isPasswordValid) {
+        if (credentials.password !== user.password) {
           throw new Error("Senha incorreta.");
         }
 
@@ -61,9 +55,6 @@ export const authOptions: AuthOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  session: {
-    maxAge: 30 * 60,
-  },
 };
 
 export default NextAuth(authOptions);
